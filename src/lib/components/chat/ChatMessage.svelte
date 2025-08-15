@@ -24,7 +24,7 @@
 	} from "$lib/types/MessageUpdate";
 	import { base } from "$app/paths";
 	import ToolUpdate from "./ToolUpdate.svelte";
-	import MarkdownRenderer from "./MarkdownRenderer.svelte";
+	import C1Renderer from "./C1Renderer.svelte";
 	import OpenReasoningResults from "./OpenReasoningResults.svelte";
 	import Alternatives from "./Alternatives.svelte";
 	import Vote from "./Vote.svelte";
@@ -193,11 +193,7 @@
 					<IconLoading classNames="loading inline ml-2 first:ml-0" />
 				{/if}
 
-				<div
-					class="prose max-w-none dark:prose-invert max-sm:prose-sm prose-headings:font-semibold prose-h1:text-lg prose-h2:text-base prose-h3:text-base prose-pre:bg-gray-800 dark:prose-pre:bg-gray-900"
-				>
-					<MarkdownRenderer content={message.content} sources={webSearchSources} />
-				</div>
+				<C1Renderer content={message.content} sources={webSearchSources} {loading} {isLast} />
 			</div>
 
 			<!-- Web Search sources -->

@@ -1,5 +1,5 @@
 <script lang="ts">
-	import MarkdownRenderer from "./MarkdownRenderer.svelte";
+	import C1Renderer from "./C1Renderer.svelte";
 	import CarbonCaretDown from "~icons/carbon/caret-down";
 
 	interface Props {
@@ -72,7 +72,7 @@
 		class="space-y-4 border-t border-gray-200 px-5 pb-2 pt-2 text-sm text-gray-600 dark:border-gray-800 dark:text-gray-400"
 	>
 		{#key content}
-			<MarkdownRenderer {content} />
+			<C1Renderer {content} />
 		{/key}
 	</div>
 </details>
