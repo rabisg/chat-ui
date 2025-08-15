@@ -29,6 +29,11 @@
 	import Alternatives from "./Alternatives.svelte";
 	import Vote from "./Vote.svelte";
 
+	interface Action {
+		humanFriendlyMessage: string;
+		llmFriendlyMessage: string;
+	}
+
 	interface Props {
 		message: Message;
 		loading?: boolean;
@@ -53,6 +58,7 @@
 
 	const dispatch = createEventDispatcher<{
 		retry: { content?: string; id: Message["id"] };
+		message: { content: string };
 	}>();
 
 	let contentEl: HTMLElement | undefined = $state();
@@ -126,6 +132,12 @@
 			}
 		}
 	});
+
+	// onAction callback for C1Component to continue the conversation
+	function handleC1Action(action: Action) {
+		// Dispatch the llmFriendlyMessage as a new message event to continue the conversation
+		dispatch("message", { content: action.llmFriendlyMessage });
+	}
 </script>
 
 {#if message.from === "assistant"}
@@ -193,7 +205,7 @@
 					<IconLoading classNames="loading inline ml-2 first:ml-0" />
 				{/if}
 
-				<C1Renderer content={message.content} sources={webSearchSources} {loading} {isLast} />
+				<C1Renderer content={message.content} sources={webSearchSources} {loading} {isLast} onAction={handleC1Action} />
 			</div>
 
 			<!-- Web Search sources -->

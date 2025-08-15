@@ -296,6 +296,14 @@
 							on:vote
 							on:continue
 							on:showAlternateMsg
+							on:message={(ev) => {
+								if (page.data.loginRequired) {
+									ev.preventDefault();
+									$loginModalOpen = true;
+								} else {
+									dispatch("message", ev.detail.content);
+								}
+							}}
 						/>
 					{/each}
 					{#if isReadOnly}
@@ -313,6 +321,14 @@
 					}}
 					isAuthor={!shared}
 					readOnly={isReadOnly}
+					on:message={(ev) => {
+						if (page.data.loginRequired) {
+							ev.preventDefault();
+							$loginModalOpen = true;
+						} else {
+							dispatch("message", ev.detail.content);
+						}
+					}}
 				/>
 			{:else if !assistant}
 				<ChatIntroduction

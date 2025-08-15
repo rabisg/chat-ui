@@ -3,18 +3,24 @@
 	import { onMount, onDestroy } from "svelte";
 	import type { Root } from "react-dom/client";
 
+	interface Action {
+		humanFriendlyMessage: string;
+		llmFriendlyMessage: string;
+	}
+
 	interface Props {
 		content: string;
 		sources?: unknown[];
 		loading?: boolean;
 		isLast?: boolean;
+		onAction?: (action: Action) => void;
 	}
 
-	let { content, sources = [], loading = false, isLast = false }: Props = $props();
+	let { content, sources = [], loading = false, isLast = false, onAction }: Props = $props();
 	let containerEl: HTMLDivElement | undefined = $state();
 	let reactRoot: Root | null = null;
 	let updateProps:
-		| ((newProps: { content: string; sources: unknown[]; isStreaming: boolean }) => void)
+		| ((newProps: { content: string; sources: unknown[]; isStreaming: boolean; onAction?: (action: Action) => void }) => void)
 		| null = null;
 
 	// Determine if content is currently streaming
@@ -35,6 +41,7 @@
 					content,
 					sources,
 					isStreaming,
+					onAction,
 				});
 
 				// Log when React state changes
@@ -54,7 +61,12 @@
 							contentLength: newProps.content.length,
 							isStreaming: newProps.isStreaming,
 						});
-						setProps(newProps);
+						setProps({
+							content: newProps.content,
+							sources: newProps.sources,
+							isStreaming: newProps.isStreaming,
+							onAction: newProps.onAction || onAction,
+						});
 					};
 				}, []);
 
@@ -105,6 +117,7 @@
 				content,
 				sources,
 				isStreaming,
+				onAction,
 			});
 		}
 	});
