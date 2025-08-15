@@ -58,7 +58,7 @@
 
 	const dispatch = createEventDispatcher<{
 		retry: { content?: string; id: Message["id"] };
-		message: { content: string };
+		message: { content: string; llmFriendlyContent?: string };
 	}>();
 
 	let contentEl: HTMLElement | undefined = $state();
@@ -135,8 +135,11 @@
 
 	// onAction callback for C1Component to continue the conversation
 	function handleC1Action(action: Action) {
-		// Dispatch the llmFriendlyMessage as a new message event to continue the conversation
-		dispatch("message", { content: action.llmFriendlyMessage });
+		// Dispatch both messages - humanFriendly for display, llmFriendly for LLM
+		dispatch("message", {
+			content: action.humanFriendlyMessage,
+			llmFriendlyContent: action.llmFriendlyMessage
+		});
 	}
 </script>
 

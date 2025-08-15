@@ -128,11 +128,13 @@
 	// this function is used to send new message to the backends
 	async function writeMessage({
 		prompt,
+		llmFriendlyPrompt,
 		messageId = messagesPath.at(-1)?.id ?? undefined,
 		isRetry = false,
 		isContinue = false,
 	}: {
 		prompt?: string;
+		llmFriendlyPrompt?: string;
 		messageId?: ReturnType<typeof v4>;
 		isRetry?: boolean;
 		isContinue?: boolean;
@@ -262,6 +264,7 @@
 				{
 					base,
 					inputs: prompt,
+					llmFriendlyInputs: llmFriendlyPrompt,
 					messageId,
 					isRetry,
 					isContinue,
@@ -406,15 +409,19 @@
 		}
 	});
 
-	async function onMessage(event: CustomEvent<string>) {
+	async function onMessage(event: CustomEvent<string | { content: string; llmFriendlyContent?: string }>) {
+		// Handle both string messages and C1 action messages
+		const messageContent = typeof event.detail === 'string' ? event.detail : event.detail.content;
+		const llmFriendlyContent = typeof event.detail === 'object' ? event.detail.llmFriendlyContent : undefined;
+
 		if (!data.shared) {
-			await writeMessage({ prompt: event.detail });
+			await writeMessage({ prompt: messageContent, llmFriendlyPrompt: llmFriendlyContent });
 		} else {
 			await convFromShared()
 				.then(async (convId) => {
 					await goto(`${base}/conversation/${convId}`, { invalidateAll: true });
 				})
-				.then(async () => await writeMessage({ prompt: event.detail }))
+				.then(async () => await writeMessage({ prompt: messageContent, llmFriendlyPrompt: llmFriendlyContent }))
 				.finally(() => (loading = false));
 		}
 	}

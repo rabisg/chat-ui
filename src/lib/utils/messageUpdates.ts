@@ -46,6 +46,7 @@ export const isMessageToolErrorUpdate = (update: MessageUpdate): update is Messa
 type MessageUpdateRequestOptions = {
 	base: string;
 	inputs?: string;
+	llmFriendlyInputs?: string;
 	messageId?: string;
 	isRetry: boolean;
 	isContinue: boolean;
@@ -65,6 +66,7 @@ export async function fetchMessageUpdates(
 
 	const optsJSON = JSON.stringify({
 		inputs: opts.inputs,
+		llm_friendly_inputs: opts.llmFriendlyInputs,
 		id: opts.messageId,
 		is_retry: opts.isRetry,
 		is_continue: opts.isContinue,

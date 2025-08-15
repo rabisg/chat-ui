@@ -149,6 +149,7 @@ export async function POST({ request, locals, params, getClientAddress }) {
 
 	const {
 		inputs: newPrompt,
+		llm_friendly_inputs: llmFriendlyPrompt,
 		id: messageId,
 		is_retry: isRetry,
 		is_continue: isContinue,
@@ -158,6 +159,12 @@ export async function POST({ request, locals, params, getClientAddress }) {
 		.object({
 			id: z.string().uuid().refine(isMessageId).optional(), // parent message id to append to for a normal message, or the message id for a retry/continue
 			inputs: z.optional(
+				z
+					.string()
+					.min(1)
+					.transform((s) => s.replace(/\r\n/g, "\n"))
+			),
+			llm_friendly_inputs: z.optional(
 				z
 					.string()
 					.min(1)
@@ -263,6 +270,7 @@ export async function POST({ request, locals, params, getClientAddress }) {
 				{
 					from: "user",
 					content: newPrompt,
+					llmFriendlyContent: llmFriendlyPrompt,
 					files: uploadedFiles,
 					createdAt: new Date(),
 					updatedAt: new Date(),
@@ -299,6 +307,7 @@ export async function POST({ request, locals, params, getClientAddress }) {
 			{
 				from: "user",
 				content: newPrompt ?? "",
+				llmFriendlyContent: llmFriendlyPrompt,
 				files: uploadedFiles,
 				createdAt: new Date(),
 				updatedAt: new Date(),

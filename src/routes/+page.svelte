@@ -19,7 +19,8 @@
 
 	const settings = useSettingsStore();
 
-	async function createConversation(message: string) {
+	async function createConversation(message: string | { content: string; llmFriendlyContent?: string }) {
+		const messageContent = typeof message === 'string' ? message : message.content;
 		try {
 			loading = true;
 
@@ -62,7 +63,7 @@
 
 			// Ugly hack to use a store as temp storage, feel free to improve ^^
 			pendingMessage.set({
-				content: message,
+				content: messageContent,
 				files,
 			});
 

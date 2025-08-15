@@ -14,6 +14,14 @@ import { logger } from "../logger";
 
 type GenerateContext = Omit<TextGenerationContext, "messages"> & { messages: EndpointMessage[] };
 
+// Helper function to process messages and use llmFriendlyContent when available
+function processMessagesForLLM(messages: EndpointMessage[]): EndpointMessage[] {
+	return messages.map((message) => ({
+		...message,
+		content: message.llmFriendlyContent ?? message.content,
+	}));
+}
+
 export async function* generate(
 	{ model, endpoint, conv, messages, assistant, isContinue, promptedAt }: GenerateContext,
 	toolResults: ToolResult[],
@@ -44,7 +52,7 @@ export async function* generate(
 	}
 
 	for await (const output of await endpoint({
-		messages,
+		messages: processMessagesForLLM(messages),
 		preprompt,
 		continueMessage: isContinue,
 		generateSettings: assistant?.generateSettings,

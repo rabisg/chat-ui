@@ -2,6 +2,14 @@ import { taskModel } from "$lib/server/models";
 import { MessageUpdateType, type MessageUpdate } from "$lib/types/MessageUpdate";
 import type { EndpointMessage } from "./endpoints/endpoints";
 
+// Helper function to process messages and use llmFriendlyContent when available
+function processMessagesForLLM(messages: EndpointMessage[]): EndpointMessage[] {
+	return messages.map((message) => ({
+		...message,
+		content: message.llmFriendlyContent ?? message.content,
+	}));
+}
+
 export async function* generateFromDefaultEndpoint({
 	messages,
 	preprompt,
@@ -13,7 +21,11 @@ export async function* generateFromDefaultEndpoint({
 }): AsyncGenerator<MessageUpdate, string, undefined> {
 	try {
 		const endpoint = await taskModel.getEndpoint();
-		const tokenStream = await endpoint({ messages, preprompt, generateSettings });
+		const tokenStream = await endpoint({
+			messages: processMessagesForLLM(messages),
+			preprompt,
+			generateSettings,
+		});
 
 		for await (const output of tokenStream) {
 			// if not generated_text is here it means the generation is not done

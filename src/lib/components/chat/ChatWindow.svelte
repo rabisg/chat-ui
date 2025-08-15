@@ -81,7 +81,7 @@
 	});
 
 	const dispatch = createEventDispatcher<{
-		message: string;
+		message: string | { content: string; llmFriendlyContent?: string };
 		share: void;
 		stop: void;
 		retry: { id: Message["id"]; content?: string };
@@ -301,7 +301,12 @@
 									ev.preventDefault();
 									$loginModalOpen = true;
 								} else {
-									dispatch("message", ev.detail.content);
+									// Handle both string messages and C1 action messages
+									if (typeof ev.detail === 'string') {
+										dispatch("message", ev.detail);
+									} else {
+										dispatch("message", ev.detail);
+									}
 								}
 							}}
 						/>
@@ -326,7 +331,12 @@
 							ev.preventDefault();
 							$loginModalOpen = true;
 						} else {
-							dispatch("message", ev.detail.content);
+							// Handle both string messages and C1 action messages
+							if (typeof ev.detail === 'string') {
+								dispatch("message", ev.detail);
+							} else {
+								dispatch("message", ev.detail);
+							}
 						}
 					}}
 				/>

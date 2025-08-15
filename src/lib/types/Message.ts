@@ -7,6 +7,8 @@ export type Message = Partial<Timestamps> & {
 	from: "user" | "assistant" | "system";
 	id: ReturnType<typeof v4>;
 	content: string;
+	// For messages that have different content for LLM vs display
+	llmFriendlyContent?: string;
 	updates?: MessageUpdate[];
 	webSearchId?: WebSearch["_id"]; // legacy version
 	webSearch?: WebSearch;
