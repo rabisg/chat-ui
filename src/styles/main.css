@@ -1,4 +1,5 @@
 @import "./highlight-js.css";
+@import "@crayonai/react-ui/styles/index.css";
 
 @tailwind base;
 @tailwind components;

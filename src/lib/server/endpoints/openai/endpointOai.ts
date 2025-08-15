@@ -90,7 +90,9 @@ export const endpointOAIParametersSchema = z.object({
 	model: z.any(),
 	type: z.literal("openai"),
 	baseURL: z.string().url().default("https://api.openai.com/v1"),
-	apiKey: z.string().default(config.OPENAI_API_KEY || config.HF_TOKEN || "sk-"),
+	apiKey: z
+		.string()
+		.default(config.OPENAI_API_KEY || config.HF_TOKEN || config.THESYS_API_KEY || "sk-"),
 	completion: z
 		.union([z.literal("completions"), z.literal("chat_completions")])
 		.default("chat_completions"),
@@ -218,6 +220,9 @@ export async function endpointOai(
 				// No system message exists - create a new one with preprompt or empty string
 				messagesOpenAI = [{ role: "system", content: preprompt ?? "" }, ...messagesOpenAI];
 			}
+
+			// Strip out empty messages since they are not supported by the API.
+			messagesOpenAI = messagesOpenAI.filter((message) => message.content !== "");
 
 			// Handle models that don't support system role by converting to user message
 			// This maintains compatibility with older or non-standard models
