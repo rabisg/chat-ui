@@ -8,8 +8,7 @@ import { Resvg } from "@resvg/resvg-js";
 import satori from "satori";
 import { html } from "satori-html";
 
-import InterRegular from "$lib/server/fonts/Inter-Regular.ttf";
-import InterBold from "$lib/server/fonts/Inter-Bold.ttf";
+import { loadInterFonts } from "$lib/server/fonts";
 import sharp from "sharp";
 
 export const GET: RequestHandler = (async ({ params }) => {
@@ -20,6 +19,9 @@ export const GET: RequestHandler = (async ({ params }) => {
 	if (!assistant) {
 		error(404, "Assistant not found.");
 	}
+
+	// Load Inter fonts from Google Fonts
+	const fonts = await loadInterFonts([500, 700]);
 
 	let avatar = "";
 	const fileId = collections.bucket.find({ filename: assistant._id.toString() });
@@ -58,12 +60,12 @@ export const GET: RequestHandler = (async ({ params }) => {
 		fonts: [
 			{
 				name: "Inter",
-				data: InterRegular as unknown as ArrayBuffer,
+				data: fonts[500],
 				weight: 500,
 			},
 			{
 				name: "Inter",
-				data: InterBold as unknown as ArrayBuffer,
+				data: fonts[700],
 				weight: 700,
 			},
 		],

@@ -1,4 +1,1 @@
-declare module "*.ttf" {
-	const value: ArrayBuffer;
-	export default value;
-}
+// TTF module declaration removed - fonts are now loaded from Google Fonts at runtime

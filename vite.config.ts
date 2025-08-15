@@ -1,26 +1,13 @@
 import { sveltekit } from "@sveltejs/kit/vite";
 import Icons from "unplugin-icons/vite";
 import react from "@vitejs/plugin-react";
-import { promises } from "fs";
 import { defineConfig } from "vitest/config";
 import { resolve } from "path";
 import fs from "fs-extra";
 import { spawn } from "child_process";
 import type { Plugin } from "vite";
 
-// used to load fonts server side for thumbnail generation
-function loadTTFAsArrayBuffer() {
-	return {
-		name: "load-ttf-as-array-buffer",
-		async transform(_src, id) {
-			if (id.endsWith(".ttf")) {
-				return `export default new Uint8Array([
-			${new Uint8Array(await promises.readFile(id))}
-		  ]).buffer`;
-			}
-		},
-	};
-}
+// Note: TTF loading plugin removed - fonts are now loaded from Google Fonts at runtime
 const isViteNode = process.argv.some((arg) => arg.includes("vite-node")) || !!process.env.VITE_NODE;
 const skipLlamaCppBuild = process.env.SKIP_LLAMA_CPP_BUILD === "true";
 const shouldCopyLlama =
@@ -90,7 +77,6 @@ export default defineConfig({
 		Icons({
 			compiler: "svelte",
 		}),
-		loadTTFAsArrayBuffer(),
 		...(shouldCopyLlama ? [copyLlamaFiles()] : []),
 	],
 	optimizeDeps: {

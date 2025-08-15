@@ -5,8 +5,7 @@ import { Resvg } from "@resvg/resvg-js";
 import satori from "satori";
 import { html } from "satori-html";
 
-import InterRegular from "$lib/server/fonts/Inter-Regular.ttf";
-import InterBold from "$lib/server/fonts/Inter-Bold.ttf";
+import { loadInterFonts } from "$lib/server/fonts";
 import { base } from "$app/paths";
 import { models } from "$lib/server/models";
 import { render } from "svelte/server";
@@ -17,6 +16,10 @@ export const GET: RequestHandler = (async ({ params }) => {
 	if (!model || model.unlisted) {
 		redirect(302, `${base}/`);
 	}
+
+	// Load Inter fonts from Google Fonts
+	const fonts = await loadInterFonts([500, 700]);
+
 	const renderedComponent = render(ModelThumbnail, {
 		props: {
 			name: model.name,
@@ -32,12 +35,12 @@ export const GET: RequestHandler = (async ({ params }) => {
 		fonts: [
 			{
 				name: "Inter",
-				data: InterRegular as unknown as ArrayBuffer,
+				data: fonts[500],
 				weight: 500,
 			},
 			{
 				name: "Inter",
-				data: InterBold as unknown as ArrayBuffer,
+				data: fonts[700],
 				weight: 700,
 			},
 		],
