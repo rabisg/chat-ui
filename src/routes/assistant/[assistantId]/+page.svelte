@@ -87,7 +87,10 @@
 </svelte:head>
 
 <ChatWindow
-	on:message={(ev) => createConversation(ev.detail)}
+	on:message={(ev) => {
+		const message = typeof ev.detail === 'string' ? ev.detail : ev.detail.content;
+		createConversation(message);
+	}}
 	{loading}
 	currentModel={findCurrentModel([...data.models, ...data.oldModels], data.assistant.modelId)}
 	assistant={data.assistant}

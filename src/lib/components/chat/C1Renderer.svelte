@@ -14,13 +14,14 @@
 		loading?: boolean;
 		isLast?: boolean;
 		onAction?: (action: Action) => void;
+		updateMessage?: (message: string) => void;
 	}
 
-	let { content, sources = [], loading = false, isLast = false, onAction }: Props = $props();
+	let { content, sources = [], loading = false, isLast = false, onAction, updateMessage }: Props = $props();
 	let containerEl: HTMLDivElement | undefined = $state();
 	let reactRoot: Root | null = null;
 	let updateProps:
-		| ((newProps: { content: string; sources: unknown[]; isStreaming: boolean; onAction?: (action: Action) => void }) => void)
+		| ((newProps: { content: string; sources: unknown[]; isStreaming: boolean; onAction?: (action: Action) => void; updateMessage?: (message: string) => void }) => void)
 		| null = null;
 
 	// Determine if content is currently streaming
@@ -42,6 +43,7 @@
 					sources,
 					isStreaming,
 					onAction,
+					updateMessage,
 				});
 
 				// Log when React state changes
@@ -66,6 +68,7 @@
 							sources: newProps.sources,
 							isStreaming: newProps.isStreaming,
 							onAction: newProps.onAction || onAction,
+							updateMessage: newProps.updateMessage || updateMessage,
 						});
 					};
 				}, []);
@@ -118,6 +121,7 @@
 				sources,
 				isStreaming,
 				onAction,
+				updateMessage,
 			});
 		}
 	});

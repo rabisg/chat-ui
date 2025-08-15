@@ -86,6 +86,7 @@
 		stop: void;
 		retry: { id: Message["id"]; content?: string };
 		continue: { id: Message["id"] };
+		updateMessage: { id: Message["id"]; content: string };
 	}>();
 
 	const handleSubmit = () => {
@@ -309,6 +310,9 @@
 									}
 								}
 							}}
+							on:updateMessage={(ev) => {
+								dispatch("updateMessage", ev.detail);
+							}}
 						/>
 					{/each}
 					{#if isReadOnly}
@@ -338,6 +342,9 @@
 								dispatch("message", ev.detail);
 							}
 						}
+					}}
+					on:updateMessage={(ev) => {
+						dispatch("updateMessage", ev.detail);
 					}}
 				/>
 			{:else if !assistant}

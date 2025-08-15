@@ -3,7 +3,6 @@
 	import { createEventDispatcher, tick } from "svelte";
 	import { page } from "$app/state";
 
-	import CopyToClipBoardBtn from "../CopyToClipBoardBtn.svelte";
 	import IconLoading from "../icons/IconLoading.svelte";
 	import CarbonRotate360 from "~icons/carbon/rotate-360";
 	import CarbonDownload from "~icons/carbon/download";
@@ -59,6 +58,7 @@
 	const dispatch = createEventDispatcher<{
 		retry: { content?: string; id: Message["id"] };
 		message: { content: string; llmFriendlyContent?: string };
+		updateMessage: { id: Message["id"]; content: string };
 	}>();
 
 	let contentEl: HTMLElement | undefined = $state();
@@ -141,6 +141,14 @@
 			llmFriendlyContent: action.llmFriendlyMessage
 		});
 	}
+
+	// updateMessage callback for C1Component to update the current message content
+	function handleUpdateMessage(content: string) {
+		dispatch("updateMessage", {
+			id: message.id,
+			content
+		});
+	}
 </script>
 
 {#if message.from === "assistant"}
@@ -208,7 +216,7 @@
 					<IconLoading classNames="loading inline ml-2 first:ml-0" />
 				{/if}
 
-				<C1Renderer content={message.content} sources={webSearchSources} {loading} {isLast} onAction={handleC1Action} />
+				<C1Renderer content={message.content} sources={webSearchSources} {loading} {isLast} onAction={handleC1Action} updateMessage={handleUpdateMessage} />
 			</div>
 
 			<!-- Web Search sources -->
@@ -276,13 +284,7 @@
 				>
 					<CarbonRotate360 />
 				</button>
-				<CopyToClipBoardBtn
-					onClick={() => {
-						isCopied = true;
-					}}
-					classNames="btn rounded-sm p-1 text-sm text-gray-400 hover:text-gray-500 focus:ring-0 dark:text-gray-400 dark:hover:text-gray-300"
-					value={message.content}
-				/>
+
 			</div>
 		{/if}
 	</div>

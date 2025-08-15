@@ -477,6 +477,38 @@
 		}
 	}
 
+	async function onUpdateMessage(event: CustomEvent<{ id: Message["id"]; content: string }>) {
+		const { id, content } = event.detail;
+
+		// Optimistically update the UI
+		messages = messages.map((message) => {
+			if (message.id === id) {
+				return { ...message, content, updatedAt: new Date() };
+			}
+			return message;
+		});
+
+		try {
+			// Update the message in the database
+			const response = await fetch(`${base}/api/conversation/${page.params.id}/message/${id}`, {
+				method: "PATCH",
+				headers: {
+					"Content-Type": "application/json",
+				},
+				body: JSON.stringify({ content }),
+			});
+
+			if (!response.ok) {
+				throw new Error(`Failed to update message: ${response.status}`);
+			}
+
+		} catch (err) {
+			console.error("Failed to update message:", err);
+			// Could add error handling here - maybe revert the optimistic update
+			// or show an error notification to the user
+		}
+	}
+
 	const settings = useSettingsStore();
 	let messages = $state(data.messages);
 	$effect(() => {
@@ -522,6 +554,7 @@
 	on:retry={onRetry}
 	on:continue={onContinue}
 	on:showAlternateMsg={onShowAlternateMsg}
+	on:updateMessage={onUpdateMessage}
 	on:vote={(event) => voteMessage(event.detail.score, event.detail.id)}
 	on:share={() => shareConversation(page.params.id, data.title)}
 	on:stop={async () => {

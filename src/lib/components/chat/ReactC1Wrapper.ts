@@ -10,9 +10,15 @@ interface Props {
 	content: string;
 	isStreaming?: boolean;
 	onAction?: (action: Action) => void;
+	updateMessage?: (message: string) => void;
 }
 
-export default function ReactC1Wrapper({ content, isStreaming = false, onAction }: Props) {
+export default function ReactC1Wrapper({
+	content,
+	isStreaming = false,
+	onAction,
+	updateMessage,
+}: Props) {
 	return React.createElement(
 		ThemeProvider,
 		null,
@@ -20,6 +26,7 @@ export default function ReactC1Wrapper({ content, isStreaming = false, onAction 
 			c1Response: content,
 			isStreaming,
 			onAction,
+			updateMessage,
 		})
 	);
 }
