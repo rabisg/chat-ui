@@ -15,6 +15,9 @@ export default {
 				xxs: "0.625rem",
 				smd: "0.94rem",
 			},
+			fontFamily: {
+				sans: ["Inter", ...defaultTheme.fontFamily.sans],
+			},
 		},
 	},
 	plugins: [
